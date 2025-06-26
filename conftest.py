@@ -61,17 +61,13 @@ def driver(request):
     new_profile = None
     if browser == 'chrome':
         options = webdriver.ChromeOptions()
-        #options.add_experimental_option("detach", True)
         new_profile = tempfile.mkdtemp()
         options.add_argument(f"--user-data-dir={new_profile}")
-
-        #options.add_argument("--incognito")
         options.add_argument("--ignore-certificate-errors")
         options.add_argument("--allow-insecure-localhost")
         options.add_argument("--ignore-ssl-errors")
         options.add_argument("--disable-web-security")
         options.add_argument("--allow-running-insecure-content")
-
         driver = webdriver.Chrome(options=options,
                                   service=ChromeService(ChromeDriverManager().install()))
     elif browser == 'firefox':
