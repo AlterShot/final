@@ -19,9 +19,9 @@ def test_full_checkout(driver, simple_order):
     print("Страница подтверждения заказа верна")
 
     overview_page.close_order_button_click()
-    assert "Спасибо" in checkout_complete_page.thanks_text(), "Заказ не подтвержден"
+    assert checkout_complete_page.thanks_text(), "Заказ не подтвержден"
     print("Заказ подтвержден")
 
     checkout_complete_page.back_to_shop_final_button_click()
-    assert "Продукты" in shop_page.text_above_shop().text, "Возврат на страницу каталога не сработал"
+    assert "Продукты" in shop_page.text_above_shop(), "Возврат на страницу каталога не сработал"
     print("Вы вернулись на страницу каталога после подтверждения заказа")

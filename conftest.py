@@ -1,3 +1,5 @@
+import shutil
+import tempfile
 import pytest
 import logging
 import os
@@ -23,7 +25,7 @@ if not os.path.exists('logs'):
 
 logger_file = f'logs/test_log_{datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}.log'
 
-file_handler = logging.FileHandler(logger_file)
+file_handler = logging.FileHandler(logger_file, encoding="utf-8")
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
@@ -34,17 +36,21 @@ def pytest_runtest_makereport(item, call):
     result = outcome.get_result()
     if result.when == 'call':
         test_name = item.name
+        test_name = test_name.encode().decode("unicode_escape")
 
         if result.failed:
+            message = ""
+            if call.excinfo:
+                message = str(call.excinfo.value).split('\n')[0]
             driver = item.funcargs.get('driver', None)
             if driver:
                 screenshots_dir = 'screenshots'
                 os.makedirs(screenshots_dir, exist_ok=True)
                 screenshots_path = os.path.join(screenshots_dir, f"{test_name}.png")
                 driver.save_screenshot(screenshots_path)
-                logger.error(f"Провал: {test_name}, скрин сохранен: {screenshots_path}")
+                logger.error(f"Провал: {test_name},ошибка: {message}, скрин сохранен: {screenshots_path}")
             else:
-                logger.error(f"Провал: {test_name}, но скрин не получился")
+                logger.error(f"Провал: {test_name},ошибка: {message}, но скрин не получился")
         elif result.passed:
             logger.info(f"Успех: {test_name}")
 
@@ -52,10 +58,20 @@ def pytest_runtest_makereport(item, call):
 def driver(request):
     browser = request.param
     logger.info(f"Запускается {browser}")
+    new_profile = None
     if browser == 'chrome':
         options = webdriver.ChromeOptions()
-        options.add_experimental_option("detach", True)
-        options.add_argument("--incognito")
+        #options.add_experimental_option("detach", True)
+        new_profile = tempfile.mkdtemp()
+        options.add_argument(f"--user-data-dir={new_profile}")
+
+        #options.add_argument("--incognito")
+        options.add_argument("--ignore-certificate-errors")
+        options.add_argument("--allow-insecure-localhost")
+        options.add_argument("--ignore-ssl-errors")
+        options.add_argument("--disable-web-security")
+        options.add_argument("--allow-running-insecure-content")
+
         driver = webdriver.Chrome(options=options,
                                   service=ChromeService(ChromeDriverManager().install()))
     elif browser == 'firefox':
@@ -72,6 +88,7 @@ def driver(request):
     driver.set_window_size(1920, 1080)
     yield driver
     driver.quit()
+    shutil.rmtree(new_profile, ignore_errors=True)
 
 @pytest.fixture
 def user_login(driver):

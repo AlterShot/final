@@ -16,7 +16,7 @@ class ShopPage(BasePage):
         return self.wait_for_element(By.XPATH, xpath)
 
     def get_price_value(self, name):
-        price_value = int(self.get_product_price(name).text.replace('₽', '').strip())
+        price_value = float(self.get_product_price(name).text.replace('₽', '').strip())
         return price_value
 
     def get_product_description(self, name):
@@ -24,12 +24,12 @@ class ShopPage(BasePage):
         return self.wait_for_element(By.XPATH, xpath)
 
     def get_product_add_button(self, name):
-        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[contains(text(), 'add')]"
-        return self.wait_for_element(By.XPATH, xpath)
+        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[.//span[text()='add']]"
+        return self.wait_for_click(By.XPATH, xpath)
 
     def get_product_remove_button(self, name):
-        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[contains(text(), 'remove')]"
-        return self.wait_for_element(By.XPATH, xpath)
+        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[.//span[text()='remove']]"
+        return self.wait_for_click(By.XPATH, xpath)
 
     def add_product(self, name):
         self.get_product_add_button(name).click()
@@ -42,6 +42,25 @@ class ShopPage(BasePage):
         text = self.wait_for_element(By.XPATH, xpath).text
         return text
 
+    def get_product_shop_quantity_icon(self):
+        xpath = "//span[contains(@class, 'cart-counter') and contains(@class, 'badge')]"
+        return int(self.wait_for_element(By.XPATH, xpath).text.strip())
+
     def get_product_shop_quantity(self, name):
         xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//input[contains(@class, 'shadow-form')]"
-        return self.wait_for_element(By.XPATH, xpath)
+        box_value = self.wait_for_element(By.XPATH, xpath)
+        if box_value is None:
+            return 0
+        item_value = box_value.get_attribute("value")
+        return int(item_value) if item_value and item_value.isdigit() else 0
+
+    def clear_the_shop(self, name):
+        while self.get_product_shop_quantity(name) > 0:
+            self.remove_product(name)
+
+    def clear_icon_shop(self, name):
+        while self.get_product_shop_quantity_icon() > 0:
+            self.remove_product(name)
+
+
+

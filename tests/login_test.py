@@ -12,23 +12,25 @@ import pytest
 def test_user_login(driver, username, password):
     page = LoginPage(driver)
     page.full_login_process(username, password)
-    page.check_url_for_https()
     assert page.at_shop_page(), f"{username}: Логин неуспешен, страница не обновилась"
     print(f"{username}: Логин успешен, открыта страница магазина")
     header = HeaderContainer(driver)
     header.open_hidden_menu()
-    assert not header.hidden_menu_edit_button(), f"Права администратора появились у {username}, произошел вход администратора"
+    assert not header.hidden_menu_edit_button_is_visible(), f"Права администратора появились у {username}, произошел вход администратора"
     print(f"Прав администратора нет, пользователь {username} верный")
 
 def test_admin_login(driver):
     page = LoginPage(driver)
     page.full_login_process('admin', 'admin')
-    page.check_url_for_https()
     header = HeaderContainer(driver)
     header.open_hidden_menu()
-    assert header.hidden_menu_edit_button(), "Вход админа неуспешен, меню возможностей администратора не появилось"
+    assert header.hidden_menu_edit_button_is_visible(), "Вход админа неуспешен, меню возможностей администратора не появилось"
     print("Вход успешен, меню возможностей администратора есть")
 
+def test_for_security(driver):
+    page = LoginPage(driver)
+    assert page.check_url_for_https(), "Сайт работает через незащищенный протокол"
+    print("Сайт работает через защищенный протокол")
 
 @pytest.mark.parametrize('username, password, reason', [
     ('покупатель', 'покупатель', 'несуществующие логин и пароль'),

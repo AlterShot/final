@@ -1,3 +1,4 @@
+from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -21,7 +22,22 @@ class BasePage:
         except TimeoutException:
             return False
 
-    def check_url_for_https(self):
+    def wait_for_click(self, by, locator, timeout=10):
+        try:
+            return WebDriverWait(self.driver, timeout).until(EC.element_to_be_clickable((by, locator)))
+        except TimeoutException:
+            return False
+
+    def wait_for_text_on_page(self, text, timeout=10):
+        xpath = f"//*[contains(text(), '{text}')]"
+        try:
+            WebDriverWait(self.driver, timeout).until(
+                EC.presence_of_element_located((By.XPATH, xpath))
+            )
+            return True
+        except TimeoutException:
+            return False
+
+    def check_url_for_https(self) -> bool:
         page_url = self.driver.current_url
-        assert page_url.startswith("https://"), "Сайт работает через незащищенный протокол"
-        print("Сайт работает через защищенный протокол")
+        return page_url.startswith("https://")

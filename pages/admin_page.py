@@ -21,7 +21,7 @@ class AdminPage(BasePage):
 
     def add_product_button(self):
         xpath = "//button[contains(., 'Добавить товар')]"
-        return self.wait_for_element(By.XPATH, xpath)
+        return self.wait_for_click(By.XPATH, xpath)
 
     def add_product_button_click(self):
         self.add_product_button().click()
@@ -46,10 +46,9 @@ class AdminPage(BasePage):
         xpath = "//input[@placeholder='Image Source']"
         return self.wait_for_element(By.XPATH, xpath)
 
-    def add_product_full_info_input(self):
-        name = "Хот-дог"
+    def add_product_full_info_input(self, name):
         item_name = f"{name} с курицей"
-        description = f"{name} 200 г"
+        description = f"{item_name} 200 г"
         exp_category = name
         price = "200"
         pic_url = "https://volshebnaya-eda.ru/wp-content/uploads/2019/09/datskij-xot-dog-10.jpg"
@@ -59,13 +58,25 @@ class AdminPage(BasePage):
         self.new_product_input_price().send_keys(price)
         self.new_product_input_pic_url().send_keys(pic_url)
 
+    def refreshed_product_info_input(self, name):
+        item_name = f"{name} с курицей"
+        description = f"{item_name} 300 г"
+        exp_category = name
+        price = "500"
+        pic_url = "https://volshebnaya-eda.ru/wp-content/uploads/2019/09/datskij-xot-dog-10.jpg"
+        self.new_product_input_name().send_keys(item_name)
+        self.new_product_input_description().send_keys(description)
+        self.new_product_input_exp_category().send_keys(exp_category)
+        self.new_product_input_price().send_keys(price)
+        self.new_product_input_pic_url().send_keys(pic_url)
+
     def back_to_product_edit_button(self):
         xpath = "//button[contains(., 'Обратно к товарам')]"
-        return self.wait_for_element(By.XPATH, xpath)
+        return self.wait_for_click(By.XPATH, xpath)
 
     def create_product_button(self):
         xpath = "//button[contains(., 'Создать товар')]"
-        return self.wait_for_element(By.XPATH, xpath)
+        return self.wait_for_click(By.XPATH, xpath)
 
     def back_to_product_edit_button_click(self):
         self.back_to_product_edit_button().click()
@@ -76,3 +87,27 @@ class AdminPage(BasePage):
         else:
             time.sleep(2)
             self.create_product_button().click()
+
+    def product_edit_button(self, name):
+        xpath = f"//div[.//div[contains(@class, 'card-title') and text()='{name}']]//button[contains(@class, 'btn-outline-success')]"
+        return self.wait_for_click(By.XPATH, xpath)
+
+    def product_delete_button(self, name):
+        xpath = f"//div[.//div[contains(@class, 'card-title') and text()='{name}']]//button[contains(@class, 'btn-outline-danger')]"
+        return self.wait_for_click(By.XPATH, xpath)
+
+    def product_edit_button_click(self, name):
+        self.product_edit_button(name).click()
+
+    def product_delete_button_click(self, name):
+        self.product_delete_button(name).click()
+
+    def confirm_refreshing_button(self):
+        xpath = "//button[contains(., 'Обновить товар')]"
+        return self.wait_for_click(By.XPATH, xpath)
+
+    def confirm_refreshing_button_click(self):
+        self.confirm_refreshing_button().click()
+
+    def is_product_displayed(self, name):
+        return self.wait_for_text_on_page(name)
