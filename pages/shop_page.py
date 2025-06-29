@@ -4,6 +4,10 @@ from pages.base_page import BasePage
 
 
 class ShopPage(BasePage):
+
+    TEXT_ABOVE_SHOP = "//div[@class='navbar-brand' and contains(text(), 'Продукты')]"
+    PRODUCT_SHOP_QUANTITY_ICON = "//span[contains(@class, 'cart-counter') and contains(@class, 'badge')]"
+
     def __init__(self, driver):
         super().__init__(driver)
 
@@ -16,8 +20,7 @@ class ShopPage(BasePage):
         return self.wait_for_element(By.XPATH, xpath)
 
     def get_price_value(self, name):
-        price_value = float(self.get_product_price(name).text.replace('₽', '').strip())
-        return price_value
+        return float(self.get_product_price(name).text.replace('₽', '').strip())
 
     def get_product_description(self, name):
         xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//div[contains(text(), ' г')]"
@@ -38,29 +41,21 @@ class ShopPage(BasePage):
         self.get_product_remove_button(name).click()
 
     def text_above_shop(self):
-        xpath = f"//div[@class='navbar-brand' and contains(text(), 'Продукты')]"
-        text = self.wait_for_element(By.XPATH, xpath).text
-        return text
+        return self.wait_for_element(By.XPATH, self.TEXT_ABOVE_SHOP).text
 
     def get_product_shop_quantity_icon(self):
-        xpath = "//span[contains(@class, 'cart-counter') and contains(@class, 'badge')]"
-        return int(self.wait_for_element(By.XPATH, xpath).text.strip())
-
-    def get_product_shop_quantity(self, name):
-        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//input[contains(@class, 'shadow-form')]"
-        box_value = self.wait_for_element(By.XPATH, xpath)
-        if box_value is None:
-            return 0
-        item_value = box_value.get_attribute("value")
-        return int(item_value) if item_value and item_value.isdigit() else 0
-
-    def clear_the_shop(self, name):
-        while self.get_product_shop_quantity(name) > 0:
-            self.remove_product(name)
+        return int(self.wait_for_element(By.XPATH, self.PRODUCT_SHOP_QUANTITY_ICON).text.strip())
 
     def clear_icon_shop(self, name):
         while self.get_product_shop_quantity_icon() > 0:
             self.remove_product(name)
 
+    def buy_many_products(self, name, quantity):
+        for i in range(quantity):
+            self.add_product(name)
+
+    def clear_and_buy(self, name, quantity):
+        self.clear_icon_shop(name)
+        self.buy_many_products(name, quantity)
 
 

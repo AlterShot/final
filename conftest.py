@@ -12,9 +12,13 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from webdriver_manager.chrome import ChromeDriverManager
+
+from pages.admin_page import AdminPage
+from pages.checkout_complete_page import CheckoutCompletePage
 from pages.login_page import LoginPage
 from pages.header_container import HeaderContainer
 from pages.cart_page import CartPage
+from pages.overview_page import OverviewPage
 from pages.shop_page import ShopPage
 
 
@@ -65,53 +69,91 @@ def driver(request):
         options.add_argument(f"--user-data-dir={new_profile}")
         options.add_argument("--ignore-certificate-errors")
         options.add_argument("--allow-insecure-localhost")
-        options.add_argument("--ignore-ssl-errors")
-        options.add_argument("--disable-web-security")
         options.add_argument("--allow-running-insecure-content")
-        driver = webdriver.Chrome(options=options,
-                                  service=ChromeService(ChromeDriverManager().install()))
+        driver = webdriver.Chrome(
+            options=options,
+            service=ChromeService(ChromeDriverManager().install())
+        )
     elif browser == 'firefox':
-        driver = webdriver.Firefox(service=FirefoxService(GeckoDriverManager().install()))
+        options = webdriver.FirefoxOptions()
+        options.add_argument("-private")
+        driver = webdriver.Firefox(options=options, service=FirefoxService(GeckoDriverManager().install()))
     elif browser == 'edge':
         options = webdriver.EdgeOptions()
         options.add_experimental_option("detach", True)
-        driver = webdriver.Edge(options=options,
-                                service=EdgeService(EdgeChromiumDriverManager().install()))
+        driver = webdriver.Edge(
+            options=options,
+            service=EdgeService(EdgeChromiumDriverManager().install())
+        )
     else:
         raise ValueError("нет такого браузера")
 
     driver.get("http://91.197.96.80/")
     driver.set_window_size(1920, 1080)
     yield driver
+    driver.delete_all_cookies()
+    driver.execute_script("window.localStorage.clear();")
+    driver.execute_script("window.sessionStorage.clear();")
     driver.quit()
     shutil.rmtree(new_profile, ignore_errors=True)
 
 @pytest.fixture
-def user_login(driver):
-    page = LoginPage(driver)
-    page.full_login_process('покупатель1', 'покупатель1')
+def user_login(driver, login_page, header):
+    login_page.full_login_process('покупатель1', 'покупатель1')
     yield driver
-    header = HeaderContainer(driver)
     header.logout()
 
 @pytest.fixture
-def admin_login(driver):
-    page = LoginPage(driver)
-    page.full_login_process('admin', 'admin')
+def admin_login(driver, login_page, header):
+    login_page.full_login_process('admin', 'admin')
     yield driver
-    header = HeaderContainer(driver)
     header.logout()
 
 @pytest.fixture
-def simple_order(driver):
-    page = LoginPage(driver)
-    shop = ShopPage(driver)
-    cart = CartPage(driver)
-    header = HeaderContainer(driver)
-    page.full_login_process('покупатель1', 'покупатель1')
-    shop.add_product("Бургер")
-    header.headline_cart_button_click()
-    cart.continue_cart_button_click()
+def simple_order(driver, login_page, shop_page, cart_page, header):
+    login_page.full_login_process('покупатель1', 'покупатель1')
+    shop_page.add_product("Бургер")
+    header.header_cart_button_click()
+    cart_page.continue_cart_button_click()
     yield driver
     header.logout()
 
+@pytest.fixture
+def login_page(driver):
+    return LoginPage(driver)
+
+@pytest.fixture
+def admin_page(driver):
+    return AdminPage(driver)
+
+@pytest.fixture
+def shop_page(driver):
+    return ShopPage(driver)
+
+@pytest.fixture
+def cart_page(driver):
+    return CartPage(driver)
+
+@pytest.fixture
+def header(driver):
+    return HeaderContainer(driver)
+
+@pytest.fixture
+def overview_page(driver):
+    return OverviewPage(driver)
+
+@pytest.fixture
+def checkout_complete_page(driver):
+    return CheckoutCompletePage(driver)
+
+@pytest.fixture
+def user_shop_page(user_login):
+    return ShopPage(user_login)
+
+@pytest.fixture
+def user_header(user_login):
+    return HeaderContainer(user_login)
+
+@pytest.fixture
+def user_cart_page(user_login):
+    return CartPage(user_login)
