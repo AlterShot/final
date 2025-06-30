@@ -16,25 +16,24 @@ class LoginPage(BasePage):
     def at_shop_page(self) -> bool:
         return self.wait_for_text_element(By.XPATH, self.AT_SHOP_PAGE, 'Магазин')
 
+    @property
     def login_field(self) -> WebElement:
-        return self.driver.find_element(By.XPATH, self.LOGIN_FIELD)
+        return self.wait_for_element(By.XPATH, self.LOGIN_FIELD)
 
+    @property
     def password_field(self) -> WebElement:
-        return self.driver.find_element(By.XPATH, self.PASSWORD_FIELD)
-
-    def login_button(self) -> WebElement:
-        return self.driver.find_element(By.XPATH, self.LOGIN_BUTTON)
+        return self.wait_for_element(By.XPATH, self.PASSWORD_FIELD)
 
     def login_button_click(self) -> None:
-        self.login_button().click()
+        self.click_button(By.XPATH, self.LOGIN_BUTTON)
 
     def enter_username(self, username: str) -> None:
-        username_field = self.login_field()
+        username_field = self.login_field
         username_field.clear()
         username_field.send_keys(username)
 
     def enter_password(self, password: str) -> None:
-        password_field = self.password_field()
+        password_field = self.password_field
         password_field.clear()
         password_field.send_keys(password)
 

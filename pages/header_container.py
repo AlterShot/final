@@ -16,50 +16,29 @@ class HeaderContainer(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def hidden_menu_button(self):
-        return self.wait_for_click(By.XPATH, self.HIDDEN_MENU_BUTTON)
-
     def open_hidden_menu(self):
-        self.hidden_menu_button().click()
+        self.click_button(By.XPATH, self.HIDDEN_MENU_BUTTON)
 
     def close_hidden_menu(self):
-        self.driver.find_element(By.XPATH, self.CLOSE_HIDDEN_MENU_BUTTON).click()
-
-    def hidden_menu_edit_button(self):
-        return self.wait_for_click(By.XPATH, self.HIDDEN_MENU_EDIT_BUTTON)
+        self.click_button(By.XPATH, self.CLOSE_HIDDEN_MENU_BUTTON)
 
     def open_edit_menu(self):
-        self.hidden_menu_edit_button().click()
-
-    def hidden_shop_button(self):
-        return self.wait_for_click(By.XPATH, self.HIDDEN_SHOP_BUTTON)
+        self.click_button(By.XPATH, self.HIDDEN_MENU_EDIT_BUTTON)
 
     def hidden_shop_button_click(self):
-        self.hidden_shop_button().click()
-
-    def hidden_cart_button(self):
-        return self.wait_for_click(By.XPATH, self.HIDDEN_CART_BUTTON)
+        self.click_button(By.XPATH, self.HIDDEN_SHOP_BUTTON)
 
     def hidden_cart_button_click(self):
-        self.hidden_cart_button().click()
-
-    def header_shop_button(self):
-        return self.wait_for_click(By.XPATH, self.HEADER_SHOP_BUTTON)
+        self.click_button(By.XPATH, self.HIDDEN_CART_BUTTON)
 
     def header_shop_button_click(self):
-        self.header_shop_button().click()
-
-    def header_cart_button(self):
-        return self.wait_for_click(By.XPATH, self.HEADER_CART_BUTTON)
+        self.click_button(By.XPATH, self.HEADER_SHOP_BUTTON)
 
     def header_cart_button_click(self):
-        self.header_cart_button().click()
-
-    def exit_button(self):
-        return self.wait_for_click(By.XPATH, self.EXIT_BUTTON)
+        self.click_button(By.XPATH, self.HEADER_CART_BUTTON)
 
     def click_exit_button(self):
-        self.exit_button().click()
+        self.click_button(By.XPATH, self.EXIT_BUTTON)
 
     def logout(self):
         self.open_hidden_menu()

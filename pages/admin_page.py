@@ -21,9 +21,6 @@ class AdminPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def get_edit_page_url(self):
-        return self.driver.current_url
-
     def edit_page_text(self):
         return self.wait_for_element(By.XPATH, self.EDIT_PAGE_TEXT).text
 
@@ -45,43 +42,23 @@ class AdminPage(BasePage):
     def new_product_input_pic_url(self):
         return self.wait_for_element(By.XPATH, self.NEW_PRODUCT_PIC_URL)
 
-    def add_product_button(self):
-        return self.wait_for_click(By.XPATH, self.ADD_PRODUCT_BUTTON)
-
     def add_product_button_click(self):
-        self.add_product_button().click()
-
-    def back_to_product_edit_button(self):
-        return self.wait_for_click(By.XPATH, self.BACK_TO_PRODUCT_EDIT_BUTTON)
-
-    def create_product_button(self):
-        return self.wait_for_click(By.XPATH, self.CREATE_PRODUCT_BUTTON)
+        self.click_button(By.XPATH, self.ADD_PRODUCT_BUTTON)
 
     def back_to_product_edit_button_click(self):
-        self.back_to_product_edit_button().click()
+        self.click_button(By.XPATH, self.BACK_TO_PRODUCT_EDIT_BUTTON)
 
     def create_product_button_click(self):
-        self.create_product_button().click()
-
-    def product_edit_button(self, name):
-        xpath = f"//div[.//div[contains(@class, 'card-title') and text()='{name}']]//button[contains(@class, 'btn-outline-success')]"
-        return self.wait_for_click(By.XPATH, xpath)
+        self.click_button(By.XPATH, self.CREATE_PRODUCT_BUTTON)
 
     def product_edit_button_click(self, name):
-        self.product_edit_button(name).click()
-
-    def product_delete_button(self, name):
-        xpath = f"//div[.//div[contains(@class, 'card-title') and text()='{name}']]//button[contains(@class, 'btn-outline-danger')]"
-        return self.wait_for_click(By.XPATH, xpath)
+        self.click_button(By.XPATH, f"//div[.//div[contains(@class, 'card-title') and text()='{name}']]//button[contains(@class, 'btn-outline-success')]")
 
     def product_delete_button_click(self, name):
-        self.product_delete_button(name).click()
-
-    def confirm_refreshing_button(self):
-        return self.wait_for_click(By.XPATH, self.CONFIRM_REFRESHING_BUTTON)
+        self.click_button(By.XPATH, f"//div[.//div[contains(@class, 'card-title') and text()='{name}']]//button[contains(@class, 'btn-outline-danger')]")
 
     def confirm_refreshing_button_click(self):
-        self.confirm_refreshing_button().click()
+        self.click_button(By.XPATH, self.CONFIRM_REFRESHING_BUTTON)
 
     def is_product_displayed(self, name):
         return self.wait_for_text_on_page(name)
@@ -98,5 +75,5 @@ class AdminPage(BasePage):
         self.new_product_input_pic_url().clear()
         self.new_product_input_pic_url().send_keys(pic_url)
 
-    def fill_the_blanks(self, item_name, description, exp_category, price, pic_url):
+    def fill_the_blanks_item(self, item_name, description, exp_category, price, pic_url):
         self._fill_box_after_clearing(item_name, description, exp_category, price, pic_url)

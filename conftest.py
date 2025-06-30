@@ -66,10 +66,14 @@ def driver(request):
     if browser == 'chrome':
         options = webdriver.ChromeOptions()
         new_profile = tempfile.mkdtemp()
-        options.add_argument(f"--user-data-dir={new_profile}")
-        options.add_argument("--ignore-certificate-errors")
-        options.add_argument("--allow-insecure-localhost")
-        options.add_argument("--allow-running-insecure-content")
+        arguments = [
+            f"--user-data-dir={new_profile}",
+            "--ignore-certificate-errors",
+            "--allow-insecure-localhost",
+            "--allow-running-insecure-content"
+        ]
+        for args in arguments:
+            options.add_argument(args)
         driver = webdriver.Chrome(
             options=options,
             service=ChromeService(ChromeDriverManager().install())

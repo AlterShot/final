@@ -26,28 +26,24 @@ class ShopPage(BasePage):
         xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//div[contains(text(), ' г')]"
         return self.wait_for_element(By.XPATH, xpath)
 
-    def get_product_add_button(self, name):
-        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[.//span[text()='add']]"
-        return self.wait_for_click(By.XPATH, xpath)
-
-    def get_product_remove_button(self, name):
-        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[.//span[text()='remove']]"
-        return self.wait_for_click(By.XPATH, xpath)
-
     def add_product(self, name):
-        self.get_product_add_button(name).click()
+        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[.//span[text()='add']]"
+        self.click_button(By.XPATH, xpath)
 
     def remove_product(self, name):
-        self.get_product_remove_button(name).click()
+        xpath = f"//div[contains(., '{name}')]/ancestor::div[contains(@class, 'card')]//button[.//span[text()='remove']]"
+        self.click_button(By.XPATH, xpath)
 
+    @property
     def text_above_shop(self):
         return self.wait_for_element(By.XPATH, self.TEXT_ABOVE_SHOP).text
 
-    def get_product_shop_quantity_icon(self):
+    @property
+    def product_shop_quantity_icon(self):
         return int(self.wait_for_element(By.XPATH, self.PRODUCT_SHOP_QUANTITY_ICON).text.strip())
 
     def clear_icon_shop(self, name):
-        while self.get_product_shop_quantity_icon() > 0:
+        while self.product_shop_quantity_icon > 0:
             self.remove_product(name)
 
     def buy_many_products(self, name, quantity):

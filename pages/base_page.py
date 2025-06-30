@@ -41,3 +41,10 @@ class BasePage:
     def check_url_for_https(self) -> bool:
         page_url = self.driver.current_url
         return page_url.startswith("https://")
+
+    def get_page_url(self):
+        return self.driver.current_url
+
+    def click_button(self, by, locator):
+        button = self.wait_for_click(by, locator)
+        button.click()

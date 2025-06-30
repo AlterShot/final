@@ -18,38 +18,35 @@ class DataInputPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def get_current_url(self):
-        return self.driver.current_url
-
+    @property
     def input_page_text_check(self):
         return self.wait_for_element(By.XPATH, self.INPUT_PAGE_TEXT_CHECK)
 
+    @property
     def name_input_box(self):
         return self.wait_for_element(By.XPATH, self.NAME_INPUT_BOX)
 
+    @property
     def surname_input_box(self):
         return self.wait_for_element(By.XPATH, self.SURNAME_INPUT_BOX)
 
+    @property
     def father_name_input_box(self):
         return self.wait_for_element(By.XPATH, self.FATHER_NAME_INPUT_BOX)
 
+    @property
     def address_input_box(self):
         return self.wait_for_element(By.XPATH, self.ADDRESS_INPUT_BOX)
 
+    @property
     def card_number_input_box(self):
         return self.wait_for_element(By.XPATH, self.CARD_NUMBER_INPUT_BOX)
 
-    def back_to_shop_button(self):
-        return self.wait_for_element(By.XPATH, self.BACK_TO_SHOP_BUTTON)
-
     def back_to_shop_button_click(self):
-        self.back_to_shop_button().click()
-
-    def proceed_purchase_button(self):
-        return self.wait_for_element(By.XPATH, self.PROCEED_PURCHASE_BUTTON)
+        self.click_button(By.XPATH, self.BACK_TO_SHOP_BUTTON)
 
     def proceed_purchase_button_click(self):
-        self.proceed_purchase_button().click()
+        self.click_button(By.XPATH, self.PROCEED_PURCHASE_BUTTON)
 
     def generate_patronymic(self, faker):
         father_name = faker.first_name_male()
@@ -60,10 +57,10 @@ class DataInputPage(BasePage):
         else:
             return father_name + "ович"
 
-    def fill_the_blanks(self):
+    def fill_the_blanks_name(self):
         faker = Faker("ru_RU")
-        self.name_input_box().send_keys(faker.first_name_male())
-        self.surname_input_box().send_keys(faker.last_name_male())
-        self.father_name_input_box().send_keys(self.generate_patronymic(faker))
-        self.address_input_box().send_keys(faker.street_address())
-        self.card_number_input_box().send_keys(faker.credit_card_number())
+        self.name_input_box.send_keys(faker.first_name_male())
+        self.surname_input_box.send_keys(faker.last_name_male())
+        self.father_name_input_box.send_keys(self.generate_patronymic(faker))
+        self.address_input_box.send_keys(faker.street_address())
+        self.card_number_input_box.send_keys(faker.credit_card_number())

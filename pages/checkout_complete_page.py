@@ -12,19 +12,14 @@ class CheckoutCompletePage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def get_final_url(self):
-        return self.driver.current_url
-
+    @property
     def completion_page_text(self):
         return self.wait_for_element(By.XPATH, self.COMPLETION_PAGE_TEXT).text
 
-    def thanks_text(self):
+    def is_thanks_text_displayed(self):
         return self.wait_for_text_element(By.XPATH, self.THANKS_TEXT, "Спасибо")
 
-    def back_to_shop_final_button(self):
-        return self.wait_for_element(By.XPATH, self.BACK_TO_SHOP_FINAL_BUTTON)
-
     def back_to_shop_final_button_click(self):
-        self.back_to_shop_final_button().click()
+        self.click_button(By.XPATH, self.BACK_TO_SHOP_FINAL_BUTTON)
 
 

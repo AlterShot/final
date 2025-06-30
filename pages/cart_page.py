@@ -19,9 +19,6 @@ class CartPage(BasePage):
     def __init__(self, driver):
         super().__init__(driver)
 
-    def get_cart_url(self):
-        return self.driver.current_url
-
     def cart_page_text(self):
         return self.wait_for_element(By.XPATH, self.CART_PAGE_TEXT).text
 
@@ -32,23 +29,14 @@ class CartPage(BasePage):
             return text
         return None
 
-    def continue_cart_button(self):
-        return self.wait_for_click(By.XPATH, self.CONTINUE_CART_BUTTON)
-
     def continue_cart_button_click(self):
-        self.continue_cart_button().click()
-
-    def add_product_cart_button(self):
-        return self.wait_for_click(By.XPATH, self.ADD_PRODUCT_CART_BUTTON)
+        self.click_button(By.XPATH, self.CONTINUE_CART_BUTTON)
 
     def add_product_cart_button_click(self):
-        self.add_product_cart_button().click()
-
-    def remove_product_cart_button(self):
-        return self.wait_for_click(By.XPATH, self.REMOVE_PRODUCT_CART_BUTTON)
+        self.click_button(By.XPATH, self.ADD_PRODUCT_CART_BUTTON)
 
     def remove_product_cart_button_click(self):
-        self.remove_product_cart_button().click()
+        self.click_button(By.XPATH, self.REMOVE_PRODUCT_CART_BUTTON)
 
     def overall_cart_price(self):
         return self.wait_for_element(By.XPATH, self.OVERALL_CART_PRICE)
